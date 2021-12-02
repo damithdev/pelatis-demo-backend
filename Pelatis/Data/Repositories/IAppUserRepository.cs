@@ -15,7 +15,7 @@ namespace Pelatis.Data.Repositories
         Task<AppUser> GetUserWithDeleted(int userId);
         Task<AppUser> AddUser(AppUser user);
         Task<AppUser> UpdateUser(AppUser user);
-        Task<Boolean> DeleteUser(int userId);
+        Task<bool> DeleteUser(int userId);
 
     }
 }

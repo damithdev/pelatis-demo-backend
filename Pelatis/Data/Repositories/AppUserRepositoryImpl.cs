@@ -34,9 +34,9 @@ namespace Pelatis.Data.Repositories
             if (result != null)
             {
                 result.IsDeleted = true;
-                int state = await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
-                if (state == 1) return true;
+                return true;
 
             }
 
@@ -77,10 +77,10 @@ namespace Pelatis.Data.Repositories
                 result.FirstName = user.FirstName;
                 result.LastName = user.LastName;
                 result.Email = user.Email;
-                result.CreatedDate = user.CreatedDate;
                 result.UpdatedDate = DateTime.Now;
                 result.Secret = user.Secret;
                 result.Salt = user.Salt;
+                result.DefaultBusiness = user.DefaultBusiness;
 
                 await _context.SaveChangesAsync();
             }

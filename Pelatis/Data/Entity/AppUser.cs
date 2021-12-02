@@ -36,5 +36,7 @@ namespace Pelatis.Entities
         public byte[] Salt { get; set; }
 
         public List<Business> Businesses { get; set; }
+
+        public int DefaultBusiness { get; set; }
     }
 }

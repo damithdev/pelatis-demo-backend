@@ -24,9 +24,7 @@ namespace Pelatis.Dto
             CreatedDate = user.CreatedDate;
             UpdatedDate = user.UpdatedDate;
             IsDeleted = user.IsDeleted;
-            //Password = "";
-
-
+            DefaultBusinessId = user.DefaultBusiness;
         }
 
         public int Id { get; set; }
@@ -52,6 +50,6 @@ namespace Pelatis.Dto
 
         public bool IsDeleted { get; set; }
 
-        //public List<Business> Businesses { get; set; }
+        public int DefaultBusinessId { get; set; }
     }
 }

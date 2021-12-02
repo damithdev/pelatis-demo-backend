@@ -13,7 +13,7 @@ namespace Pelatis.Entities
 
         [Column(TypeName = "VARCHAR")]
         [StringLength(255)]
-        public string tName { get; set; }
+        public string Name { get; set; }
 
         [Column(TypeName = "VARCHAR")]
         [StringLength(255)]

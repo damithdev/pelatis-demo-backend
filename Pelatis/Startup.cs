@@ -33,6 +33,8 @@ namespace Pelatis
             services.AddDbContext<DataContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultDBConnection")));
 
             services.AddScoped<IAppUserRepository, AppUserRepositoryImpl>();
+            services.AddScoped<IBusinessRepository, BusinessRepositoryImpl>();
+            services.AddScoped<ICustomerRepository, CustomerRepositoryImpl>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

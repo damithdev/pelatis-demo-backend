@@ -11,6 +11,7 @@ using Pelatis.Data.Repositories;
 using Pelatis.Entities;
 using System;
 using Pelatis.Dto;
+using Microsoft.Extensions.Logging;
 
 namespace Pelatis.Controllers
 {
@@ -18,18 +19,22 @@ namespace Pelatis.Controllers
     {
 
         protected readonly IAppUserRepository _appUserRepository;
-        public AppUsersController(IAppUserRepository appUserRepository)
+        private readonly ILogger<AccountsController> _logger;
+
+        public AppUsersController(IAppUserRepository appUserRepository, ILogger<AccountsController> logger)
         {
             _appUserRepository = appUserRepository;
+            _logger = logger;
         }
 
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<AppUserDto>>> GetUsers()
         {
             try
             {
-                return Ok(await _appUserRepository.GetUsers());
+                var users = await _appUserRepository.GetUsers();
+                return Ok(users.Select(x => new AppUserDto(x)).ToList());
             }
             catch (Exception)
             {
@@ -38,14 +43,14 @@ namespace Pelatis.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<AppUser>> GetUser(int id)
+        public async Task<ActionResult<AppUserDto>> GetUser(int id)
         {
             try
             {
                 var result = await _appUserRepository.GetUser(id);
                 if (result == null) return NotFound();
 
-                return result;
+                return new AppUserDto(result);
             }catch(Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error Retrieving Data");
@@ -53,34 +58,35 @@ namespace Pelatis.Controllers
         }
 
 
-        [HttpPost("update")]
-        public async Task<ActionResult<AppUser>> Update(AppUserDto dealer)
+        [HttpPost("edit")]
+        public async Task<ActionResult<AppUserDto>> Update(AppUserDto dealer)
         {
             try
             {
                 if (dealer == null) return BadRequest();
 
-                var user = _appUserRepository.GetUserByEmail(dealer.Email);
+                var user = await _appUserRepository.GetUserByEmail(dealer.Email);
 
                 if (user == null)
                 {
                     return BadRequest("User Does not Exist");
                 }
 
-                var newUser = new AppUser{
-                    FirstName = dealer.FirstName,
-                    LastName = dealer.LastName,
-                    Email = dealer.Email,
-                };
+                user.FirstName = dealer.FirstName;
+                user.LastName = dealer.LastName;
+                user.Email = dealer.Email;
 
 
-                return await _appUserRepository.UpdateUser(newUser);
+                var updatedUser =  await _appUserRepository.UpdateUser(user);
+                return new AppUserDto(updatedUser);
             }
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error Updating User");
             }
         }
+
+
 
     }
 }

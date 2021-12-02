@@ -13,7 +13,7 @@ namespace Pelatis.Entities
 
         [Column(TypeName = "VARCHAR")]
         [StringLength(255)]
-        public string ComapnyName { get; set; }
+        public string CompanyName { get; set; }
 
         [Column(TypeName = "VARCHAR")]
         [StringLength(255)]
@@ -27,7 +27,7 @@ namespace Pelatis.Entities
         [StringLength(255)]
         public string Currency { get; set; }
 
-        public AppUser AppUser { get; set; }
+        public virtual AppUser AppUser { get; set; }
 
         public List<Customer> Customers { get; set; }
 
