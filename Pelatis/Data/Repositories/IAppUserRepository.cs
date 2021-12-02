@@ -1,0 +1,21 @@
+﻿using Pelatis.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Pelatis.Data.Repositories
+{
+    public interface IAppUserRepository
+    {
+        Task<IEnumerable<AppUser>> GetUsers();
+        Task<IEnumerable<AppUser>> GetUsersWithDeleted();
+        Task<AppUser> GetUser(int userId);
+        Task<AppUser> GetUserByEmail(string email);
+        Task<AppUser> GetUserWithDeleted(int userId);
+        Task<AppUser> AddUser(AppUser user);
+        Task<AppUser> UpdateUser(AppUser user);
+        Task<Boolean> DeleteUser(int userId);
+
+    }
+}
