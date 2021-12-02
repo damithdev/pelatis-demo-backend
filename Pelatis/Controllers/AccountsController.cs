@@ -59,7 +59,6 @@ namespace Pelatis.Controllers
 
 
                 var createdUser = await _appUserRepository.AddUser(newUser);
-                // TODO Get New User Objest
                 return new AppUserDto(createdUser);
             }
             catch (Exception e)
@@ -76,9 +75,9 @@ namespace Pelatis.Controllers
             {
                 if (String.IsNullOrWhiteSpace(dealer.Email) || String.IsNullOrWhiteSpace(dealer.Password)) return BadRequest();
 
-                var user = await _appUserRepository.GetUserByEmail(dealer.Password);
+                var user = await _appUserRepository.GetUserByEmail(dealer.Email);
 
-                if (user != null)
+                if (user == null)
                 {
                     return BadRequest();
                 }
@@ -96,8 +95,6 @@ namespace Pelatis.Controllers
                 {
                     return Unauthorized(StaticEntry.InvalidCreds);
                 }
-                // TODO Get Updated User Objest
-
                 return new AppUserDto(user);
 
             }

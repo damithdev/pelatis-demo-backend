@@ -17,6 +17,7 @@ namespace Pelatis.Dto
 
         public AppUserDto(AppUser user)
         {
+            Id = user.Id;
             FirstName = user.FirstName;
             LastName = user.LastName;
             Email = user.Email;
