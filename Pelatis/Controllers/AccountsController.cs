@@ -30,7 +30,7 @@ namespace Pelatis.Controllers
 
 
         [HttpPost("register")]
-        public async Task<ActionResult<AppUserDto>> Register(AppUserDto dealer)
+        public async Task<ActionResult<AppUserDto>> Register(LoginDto dealer)
         {
             try
             {
@@ -50,8 +50,6 @@ namespace Pelatis.Controllers
 
                 var newUser = new AppUser
                 {
-                    FirstName = dealer.FirstName,
-                    LastName = dealer.LastName,
                     Email = dealer.Email.ToLower(),
                     Salt = salt,
                     Secret = secret,
