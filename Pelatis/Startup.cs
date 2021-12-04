@@ -1,19 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Pelatis.Data;
-using Pelatis.Data.Repositories;
+using Pelatis.Config.Extensions;
 
 namespace Pelatis
 {
@@ -30,12 +21,14 @@ namespace Pelatis
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddDbContext<DataContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultDBConnection")));
+            services.AddApplicationServices(Configuration);
 
-            services.AddScoped<IAppUserRepository, AppUserRepositoryImpl>();
-            services.AddScoped<IBusinessRepository, BusinessRepositoryImpl>();
-            services.AddScoped<ICustomerRepository, CustomerRepositoryImpl>();
             services.AddControllers();
+
+            services.AddCors();
+
+            services.AddIdentityServices(Configuration);
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Pelatis", Version = "v1" });
@@ -56,7 +49,13 @@ namespace Pelatis
 
             app.UseRouting();
 
+            app.UseCors();
+
+            app.UseAuthentication();
+
             app.UseAuthorization();
+
+            app.UseMiddleware<JWTContextInjector>();
 
             app.UseEndpoints(endpoints =>
             {

@@ -1,9 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Pelatis.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Pelatis.Data.Entity;
 
 namespace Pelatis.Data
 {

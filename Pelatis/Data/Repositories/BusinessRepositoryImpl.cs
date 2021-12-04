@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Pelatis.Entities;
+using Pelatis.Data.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +18,6 @@ namespace Pelatis.Data.Repositories
         public async Task<Business> AddBusiness(Business business)
         {
             business.CreatedDate = DateTime.Now;
-            business.UpdatedDate = DateTime.Now;
 
             var result = await _context.Businesses.AddAsync(business);
             await _context.SaveChangesAsync();
@@ -37,40 +36,71 @@ namespace Pelatis.Data.Repositories
             return false;
         }
 
-        public async Task<Business> GetBusiness(int businessId)
+        public async Task<Business> GetBusinessByUserAndId(AppUser appUser,int businessId)
         {
-            return await _context.Businesses.FirstOrDefaultAsync(b => b.Id == businessId);
+            try
+            {
+                return await _context.Businesses.Where(b => b.AppUser == appUser).FirstOrDefaultAsync(b => b.Id == businessId);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public async Task<IEnumerable<Business>> GetBusinesses()
         {
-            return await _context.Businesses.ToListAsync();
+            try
+            {
+                return await _context.Businesses.ToListAsync();
+            }
+            catch { return null; }
         }
 
         public async Task<IEnumerable<Business>> GetBusinessesByUser(AppUser user)
         {
-            return await _context.Businesses.Where(b => b.AppUser == user).ToListAsync();
+            try
+            {
+                return await _context.Businesses.Where(b => b.AppUser == user).ToListAsync();
+
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<Business> GetBusinessByUserAndName(AppUser user, String companyName)
+        {
+            try
+            {
+                return await _context.Businesses.Where(b => b.AppUser == user).FirstOrDefaultAsync(b => b.CompanyName == companyName);
+            }
+            catch { return null; }
         }
 
         public async Task<Business> UpdateBusiness(Business business)
         {
-            var result = await _context.Businesses.FirstOrDefaultAsync(b => b.Id == business.Id);
-            if(result != null)
-            {
-                result.CompanyName = business.CompanyName;
-                result.TypeOfBusiness = business.TypeOfBusiness;
-                result.Country = business.Country;
-                result.Currency = business.Currency;
-                result.UpdatedDate = DateTime.Now;
-                if(business.AppUser != null)
+
+                var result = await _context.Businesses.FirstOrDefaultAsync(b => b.Id == business.Id);
+                if (result != null)
                 {
-                    result.AppUser = business.AppUser;
+                    result.CompanyName = business.CompanyName;
+                    result.TypeOfBusiness = business.TypeOfBusiness;
+                    result.Country = business.Country;
+                    result.Currency = business.Currency;
+                    result.UpdatedDate = DateTime.Now;
+                    if (business.AppUser != null)
+                    {
+                        result.AppUser = business.AppUser;
+                    }
+
+                    await _context.SaveChangesAsync();
+
                 }
+                return result;
 
-                await _context.SaveChangesAsync();
 
-            }
-            return result;
         }
     }
 }

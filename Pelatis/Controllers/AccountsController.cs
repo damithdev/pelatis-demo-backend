@@ -1,19 +1,15 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualBasic;
-using Pelatis.Data;
+using Pelatis.Data.Entity;
 using Pelatis.Data.Repositories;
 using Pelatis.Dto;
 using Pelatis.DTOs;
-using Pelatis.Entities;
 using Pelatis.Helpers;
 using Pelatis.Helpers.Utilities;
+using Pelatis.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Pelatis.Controllers
@@ -23,9 +19,12 @@ namespace Pelatis.Controllers
         private readonly ILogger<AccountsController> _logger;
 
         private readonly IAppUserRepository _appUserRepository;
-        public AccountsController(IAppUserRepository appUserRepository, ILogger<AccountsController> logger)
+
+        private readonly ITokenService _tokenService;
+        public AccountsController(IAppUserRepository appUserRepository, ITokenService tokenService, ILogger<AccountsController> logger)
         {
             _appUserRepository = appUserRepository;
+            _tokenService = tokenService;
             _logger = logger;
         }
 
@@ -39,7 +38,7 @@ namespace Pelatis.Controllers
 
                 var user = await _appUserRepository.GetUserByEmail(dealer.Email);
 
-                if(user != null)
+                if (user != null)
                 {
                     return BadRequest("User With Email Alerady Exist");
                 }
@@ -47,9 +46,10 @@ namespace Pelatis.Controllers
 
                 using var hmac = new HMACSHA512();
                 byte[] salt = new byte[] { };
-                byte[] secret = new HMACUtility().ComputeHash(ref salt,dealer.Password);
-               
-                var newUser = new AppUser {
+                byte[] secret = new HMACUtility().ComputeHash(ref salt, dealer.Password);
+
+                var newUser = new AppUser
+                {
                     FirstName = dealer.FirstName,
                     LastName = dealer.LastName,
                     Email = dealer.Email.ToLower(),
@@ -59,7 +59,9 @@ namespace Pelatis.Controllers
 
 
                 var createdUser = await _appUserRepository.AddUser(newUser);
-                return new AppUserDto(createdUser);
+                var userDto = new AppUserDto(createdUser);
+                userDto.Token = _tokenService.CreateToken(createdUser);
+                return userDto;
             }
             catch (Exception e)
             {
@@ -82,9 +84,9 @@ namespace Pelatis.Controllers
                     return BadRequest();
                 }
 
-                var computedHash = new HMACUtility().ComputeHashWithSalt(user.Salt,dealer.Password);
+                var computedHash = new HMACUtility().ComputeHashWithSalt(user.Salt, dealer.Password);
 
-                if(computedHash.Length == user.Secret.Length)
+                if (computedHash.Length == user.Secret.Length)
                 {
                     for (int i = 0; i < user.Secret.Length; i++)
                     {
@@ -95,8 +97,9 @@ namespace Pelatis.Controllers
                 {
                     return Unauthorized(StaticEntry.InvalidCreds);
                 }
-                return new AppUserDto(user);
-
+                var userDto = new AppUserDto(user);
+                userDto.Token = _tokenService.CreateToken(user);
+                return userDto;
             }
             catch (Exception e)
             {

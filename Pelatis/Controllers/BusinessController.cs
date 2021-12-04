@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Pelatis.Config.Filters;
+using Pelatis.Data.Entity;
 using Pelatis.Data.Repositories;
 using Pelatis.Dto;
 using Pelatis.DTOs;
-using Pelatis.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +14,15 @@ using System.Threading.Tasks;
 
 namespace Pelatis.Controllers
 {
+
+    [Authorize]
     public class BusinessController : BaseApiController
     {
         protected readonly IBusinessRepository _businessRepository;
         protected readonly IAppUserRepository _appUserRepository;
         protected readonly ILogger<AccountsController> _logger;
 
-        public BusinessController(IBusinessRepository businessRepository,IAppUserRepository appUserRepository, ILogger<AccountsController> logger)
+        public BusinessController(IBusinessRepository businessRepository, IAppUserRepository appUserRepository, ILogger<AccountsController> logger)
         {
             _businessRepository = businessRepository;
             _appUserRepository = appUserRepository;
@@ -26,6 +30,7 @@ namespace Pelatis.Controllers
 
         }
 
+        [UserAuthorizeAttribute]
         [HttpPost("add")]
         public async Task<ActionResult<BusinessDto>> AddBusiness(BusinessDto dealer)
         {
@@ -33,16 +38,16 @@ namespace Pelatis.Controllers
             {
                 if (dealer == null) return BadRequest();
 
-                var user = await _appUserRepository.GetUser(dealer.AppUser.Id);
+                var user = (AppUser)HttpContext.Items["User"];
 
                 if (user == null)
                 {
                     return BadRequest("Invalid User");
                 }
 
-                var business = await _businessRepository.GetBusinessesByUser(user);
+                var business = await _businessRepository.GetBusinessByUserAndName(user, dealer.CompanyName);
 
-                if(business != null)
+                if (business != null)
                 {
                     return BadRequest("Business for the user Already Exist");
                 }
@@ -59,11 +64,10 @@ namespace Pelatis.Controllers
 
                 var createdBusiness = await _businessRepository.AddBusiness(newBusiness);
 
-                if(user.DefaultBusiness == 0)
-                {
-                    user.DefaultBusiness = createdBusiness.Id;
-                    await _appUserRepository.UpdateUser(user);
-                }
+
+                user.DefaultBusiness = createdBusiness.Id;
+                await _appUserRepository.UpdateUser(user);
+
 
                 return new BusinessDto(createdBusiness);
             }
@@ -74,13 +78,15 @@ namespace Pelatis.Controllers
             }
         }
 
-        [HttpGet("[action]/{id:int}")]
-        public async Task<ActionResult<IEnumerable<BusinessDto>>> GetBusinessesForUser(int id)
+        [UserAuthorizeAttribute]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<BusinessDto>>> GetBusinessesForUser()
         {
             try
             {
-                var user = await _appUserRepository.GetUser(id);
-                if (user == null) return BadRequest("User Not Found");
+                var user = (AppUser)HttpContext.Items["User"];
+                if (user == null)return BadRequest("Invalid User");
+           
 
                 var businesses = await _businessRepository.GetBusinessesByUser(user);
 
@@ -92,13 +98,16 @@ namespace Pelatis.Controllers
             }
         }
 
-
+        [UserAuthorizeAttribute]
         [HttpGet("[action]/{id:int}")]
         public async Task<ActionResult<BusinessDto>> GetBusiness(int id)
         {
             try
             {
-                var result = await _businessRepository.GetBusiness(id);
+                var user = (AppUser)HttpContext.Items["User"];
+                if (user == null) return BadRequest("Invalid User");
+
+                var result = await _businessRepository.GetBusinessByUserAndId(user,id);
                 if (result == null) return NotFound();
 
                 return new BusinessDto(result);
@@ -109,14 +118,17 @@ namespace Pelatis.Controllers
             }
         }
 
+        [UserAuthorizeAttribute]
         [HttpPost("edit")]
         public async Task<ActionResult<BusinessDto>> Update(BusinessDto dealer)
         {
             try
             {
                 if (dealer == null) return BadRequest();
+                var user = (AppUser)HttpContext.Items["User"];
+                if (user == null) return BadRequest("Invalid User");
 
-                var business = await _businessRepository.GetBusiness(dealer.Id);
+                var business = await _businessRepository.GetBusinessByUserAndId(user,dealer.Id);
 
                 if (business == null)
                 {
@@ -138,33 +150,31 @@ namespace Pelatis.Controllers
             }
         }
 
-
-        [HttpPost("switch_default_business")]
-        public async Task<ActionResult<AppUserDto>> SwitchDefaultBusiness(AppUserDto dealer)
+        [UserAuthorizeAttribute]
+        [HttpGet("[action]/{id:int}")]
+        public async Task<ActionResult<BusinessDto>> SwitchDefaultBusiness(int id)
         {
             try
             {
-                if (dealer == null) return BadRequest();
+                if (id == 0 ) return BadRequest();
 
-                var user = await _appUserRepository.GetUserByEmail(dealer.Email);//TODO get user from auth
+                var user = (AppUser)HttpContext.Items["User"];
+                if (user == null) return BadRequest("Invalid User");
 
-                if (user == null)
-                {
-                    return BadRequest("User Does not Exist");
-                }
-
-                var business = await _businessRepository.GetBusiness(dealer.DefaultBusinessId);
+                var business = await _businessRepository.GetBusinessByUserAndId(user, id);
 
                 if (business == null)
                 {
                     return BadRequest("Business Does not Exist");
                 }
 
-                user.DefaultBusiness = dealer.DefaultBusinessId;
+                user.DefaultBusiness = business.Id;
 
 
                 var updatedUser = await _appUserRepository.UpdateUser(user);
-                return new AppUserDto(updatedUser);
+                var defaultBusiness = await _businessRepository.GetBusinessByUserAndId(updatedUser, updatedUser.DefaultBusiness);
+
+                return new BusinessDto(defaultBusiness);
             }
             catch (Exception)
             {

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Pelatis.Data.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -20,7 +20,8 @@ namespace Pelatis.Data.Migrations
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Secret = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    Salt = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
+                    Salt = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    DefaultBusiness = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -33,7 +34,7 @@ namespace Pelatis.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ComapnyName = table.Column<string>(type: "VARCHAR(255)", maxLength: 255, nullable: true),
+                    CompanyName = table.Column<string>(type: "VARCHAR(255)", maxLength: 255, nullable: true),
                     TypeOfBusiness = table.Column<string>(type: "VARCHAR(255)", maxLength: 255, nullable: true),
                     Country = table.Column<string>(type: "VARCHAR(255)", maxLength: 255, nullable: true),
                     Currency = table.Column<string>(type: "VARCHAR(255)", maxLength: 255, nullable: true),
@@ -58,7 +59,7 @@ namespace Pelatis.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    tName = table.Column<string>(type: "VARCHAR(255)", maxLength: 255, nullable: true),
+                    Name = table.Column<string>(type: "VARCHAR(255)", maxLength: 255, nullable: true),
                     Email = table.Column<string>(type: "VARCHAR(255)", maxLength: 255, nullable: true),
                     Phone = table.Column<string>(type: "VARCHAR(255)", maxLength: 255, nullable: true),
                     BusinessId = table.Column<int>(type: "int", nullable: true),

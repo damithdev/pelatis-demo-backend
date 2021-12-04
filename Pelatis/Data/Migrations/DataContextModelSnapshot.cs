@@ -19,7 +19,7 @@ namespace Pelatis.Data.Migrations
                 .HasAnnotation("ProductVersion", "5.0.12")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Pelatis.Entities.AppUser", b =>
+            modelBuilder.Entity("Pelatis.Data.Entity.AppUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -67,7 +67,7 @@ namespace Pelatis.Data.Migrations
                     b.ToTable("AppUsers");
                 });
 
-            modelBuilder.Entity("Pelatis.Entities.Business", b =>
+            modelBuilder.Entity("Pelatis.Data.Entity.Business", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -108,7 +108,7 @@ namespace Pelatis.Data.Migrations
                     b.ToTable("Businesses");
                 });
 
-            modelBuilder.Entity("Pelatis.Entities.Customer", b =>
+            modelBuilder.Entity("Pelatis.Data.Entity.Customer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -145,30 +145,30 @@ namespace Pelatis.Data.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("Pelatis.Entities.Business", b =>
+            modelBuilder.Entity("Pelatis.Data.Entity.Business", b =>
                 {
-                    b.HasOne("Pelatis.Entities.AppUser", "AppUser")
+                    b.HasOne("Pelatis.Data.Entity.AppUser", "AppUser")
                         .WithMany("Businesses")
                         .HasForeignKey("AppUserId");
 
                     b.Navigation("AppUser");
                 });
 
-            modelBuilder.Entity("Pelatis.Entities.Customer", b =>
+            modelBuilder.Entity("Pelatis.Data.Entity.Customer", b =>
                 {
-                    b.HasOne("Pelatis.Entities.Business", "Business")
+                    b.HasOne("Pelatis.Data.Entity.Business", "Business")
                         .WithMany("Customers")
                         .HasForeignKey("BusinessId");
 
                     b.Navigation("Business");
                 });
 
-            modelBuilder.Entity("Pelatis.Entities.AppUser", b =>
+            modelBuilder.Entity("Pelatis.Data.Entity.AppUser", b =>
                 {
                     b.Navigation("Businesses");
                 });
 
-            modelBuilder.Entity("Pelatis.Entities.Business", b =>
+            modelBuilder.Entity("Pelatis.Data.Entity.Business", b =>
                 {
                     b.Navigation("Customers");
                 });
