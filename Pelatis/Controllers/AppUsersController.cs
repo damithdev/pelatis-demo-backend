@@ -8,8 +8,6 @@ using Pelatis.Data.Entity;
 using Pelatis.Data.Repositories;
 using Pelatis.Dto;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Pelatis.Controllers
@@ -73,8 +71,15 @@ namespace Pelatis.Controllers
 
                 user.FirstName = dealer.FirstName;
                 user.LastName = dealer.LastName;
-                user.Email = dealer.Email;
 
+                if (user.Email != dealer.Email)
+                {
+                    var userWithEmail = await _appUserRepository.GetUserByEmail(dealer.Email);
+                    if (userWithEmail != null && userWithEmail.Id != user.Id)
+                    {
+                        return BadRequest("Email Address Already Occupied");
+                    }
+                }
 
                 var updatedUser = await _appUserRepository.UpdateUser(user);
                 return new AppUserDto(updatedUser);

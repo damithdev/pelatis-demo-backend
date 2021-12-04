@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Pelatis.Config.Filters;
 using Pelatis.Data.Entity;
 using Pelatis.Data.Repositories;
-using Pelatis.Dto;
 using Pelatis.DTOs;
 using System;
 using System.Collections.Generic;
@@ -85,8 +84,8 @@ namespace Pelatis.Controllers
             try
             {
                 var user = (AppUser)HttpContext.Items["User"];
-                if (user == null)return BadRequest("Invalid User");
-           
+                if (user == null) return BadRequest("Invalid User");
+
 
                 var businesses = await _businessRepository.GetBusinessesByUser(user);
 
@@ -107,7 +106,7 @@ namespace Pelatis.Controllers
                 var user = (AppUser)HttpContext.Items["User"];
                 if (user == null) return BadRequest("Invalid User");
 
-                var result = await _businessRepository.GetBusinessByUserAndId(user,id);
+                var result = await _businessRepository.GetBusinessByUserAndId(user, id);
                 if (result == null) return NotFound();
 
                 return new BusinessDto(result);
@@ -128,7 +127,7 @@ namespace Pelatis.Controllers
                 var user = (AppUser)HttpContext.Items["User"];
                 if (user == null) return BadRequest("Invalid User");
 
-                var business = await _businessRepository.GetBusinessByUserAndId(user,dealer.Id);
+                var business = await _businessRepository.GetBusinessByUserAndId(user, dealer.Id);
 
                 if (business == null)
                 {
@@ -156,7 +155,7 @@ namespace Pelatis.Controllers
         {
             try
             {
-                if (id == 0 ) return BadRequest();
+                if (id == 0) return BadRequest();
 
                 var user = (AppUser)HttpContext.Items["User"];
                 if (user == null) return BadRequest("Invalid User");

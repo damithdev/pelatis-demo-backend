@@ -36,7 +36,7 @@ namespace Pelatis.Data.Repositories
             return false;
         }
 
-        public async Task<Business> GetBusinessByUserAndId(AppUser appUser,int businessId)
+        public async Task<Business> GetBusinessByUserAndId(AppUser appUser, int businessId)
         {
             try
             {
@@ -82,23 +82,23 @@ namespace Pelatis.Data.Repositories
         public async Task<Business> UpdateBusiness(Business business)
         {
 
-                var result = await _context.Businesses.FirstOrDefaultAsync(b => b.Id == business.Id);
-                if (result != null)
+            var result = await _context.Businesses.FirstOrDefaultAsync(b => b.Id == business.Id);
+            if (result != null)
+            {
+                result.CompanyName = business.CompanyName;
+                result.TypeOfBusiness = business.TypeOfBusiness;
+                result.Country = business.Country;
+                result.Currency = business.Currency;
+                result.UpdatedDate = DateTime.Now;
+                if (business.AppUser != null)
                 {
-                    result.CompanyName = business.CompanyName;
-                    result.TypeOfBusiness = business.TypeOfBusiness;
-                    result.Country = business.Country;
-                    result.Currency = business.Currency;
-                    result.UpdatedDate = DateTime.Now;
-                    if (business.AppUser != null)
-                    {
-                        result.AppUser = business.AppUser;
-                    }
-
-                    await _context.SaveChangesAsync();
-
+                    result.AppUser = business.AppUser;
                 }
-                return result;
+
+                await _context.SaveChangesAsync();
+
+            }
+            return result;
 
 
         }

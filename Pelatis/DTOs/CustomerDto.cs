@@ -1,7 +1,6 @@
 ﻿using Pelatis.Data.Entity;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace Pelatis.DTOs
 {

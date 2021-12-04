@@ -39,7 +39,8 @@ namespace Pelatis.Data.Repositories
 
         public async Task<Customer> GetCustomer(int id)
         {
-            try{
+            try
+            {
                 return await _context.Customers.FirstOrDefaultAsync(c => c.Id == id);
             }
             catch { return null; }

@@ -11,9 +11,9 @@ namespace Pelatis.Data.Repositories
         Task<IEnumerable<Customer>> GetCustomersByUser(AppUser user);
         Task<IEnumerable<Customer>> GetCustomersByBusiness(Business business);
         Task<Customer> GetCustomer(int id);
-        Task<Customer> GetCustomerOfUser(AppUser user,int customerId);
-        Task<Customer> GetCustomerOfBusiness(Business business,int customerId);
-        Task<Customer> GetCustomerOfBusinessByEmail(Business business,string email);
+        Task<Customer> GetCustomerOfUser(AppUser user, int customerId);
+        Task<Customer> GetCustomerOfBusiness(Business business, int customerId);
+        Task<Customer> GetCustomerOfBusinessByEmail(Business business, string email);
         Task<Customer> UpdateCustomer(Customer customer);
         Task<bool> DeleteCustomer(int customerId);
     }

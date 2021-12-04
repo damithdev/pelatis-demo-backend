@@ -41,14 +41,14 @@ namespace Pelatis.Controllers
                 var user = (AppUser)HttpContext.Items["User"];
                 if (user == null) return BadRequest("Invalid User");
 
-                var business = await _businessRepository.GetBusinessByUserAndId(user,dealer.BusinessId);
+                var business = await _businessRepository.GetBusinessByUserAndId(user, dealer.BusinessId);
 
                 if (business == null)
                 {
                     return BadRequest("Invalid Business");
                 }
 
-                var customer = await _customerRepository.GetCustomerOfBusinessByEmail(business,dealer.Email);
+                var customer = await _customerRepository.GetCustomerOfBusinessByEmail(business, dealer.Email);
 
                 if (customer != null)
                 {
@@ -84,7 +84,7 @@ namespace Pelatis.Controllers
             {
                 var user = (AppUser)HttpContext.Items["User"];
                 if (user == null) return BadRequest("Invalid User");
-                var business = await _businessRepository.GetBusinessByUserAndId(user,id);
+                var business = await _businessRepository.GetBusinessByUserAndId(user, id);
                 if (business == null) return BadRequest("Business Not Found");
 
                 var customers = await _customerRepository.GetCustomersByBusiness(business);
@@ -126,7 +126,7 @@ namespace Pelatis.Controllers
                 var user = (AppUser)HttpContext.Items["User"];
                 if (user == null) return BadRequest("Invalid User");
 
-                var result = await _customerRepository.GetCustomerOfUser(user,id);
+                var result = await _customerRepository.GetCustomerOfUser(user, id);
                 if (result == null) return NotFound();
 
                 return new CustomerDto(result);
@@ -155,7 +155,7 @@ namespace Pelatis.Controllers
                     return BadRequest("Invalid Business Id");
                 }
 
-                var customer = await _customerRepository.GetCustomerOfBusiness(business,dealer.Id);
+                var customer = await _customerRepository.GetCustomerOfBusiness(business, dealer.Id);
 
                 if (customer == null)
                 {

@@ -109,24 +109,24 @@ namespace Pelatis.Data.Repositories
         public async Task<AppUser> UpdateUser(AppUser user)
         {
 
-                var result = await _context.AppUsers.Where(u => u.IsDeleted == false).FirstOrDefaultAsync(u => u.Id == user.Id);
+            var result = await _context.AppUsers.Where(u => u.IsDeleted == false).FirstOrDefaultAsync(u => u.Id == user.Id);
 
-                if (result != null)
+            if (result != null)
+            {
+                result.FirstName = user.FirstName;
+                result.LastName = user.LastName;
+                result.Email = user.Email;
+                result.UpdatedDate = DateTime.Now;
+                if (user.DefaultBusiness > 0)
                 {
-                    result.FirstName = user.FirstName;
-                    result.LastName = user.LastName;
-                    result.Email = user.Email;
-                    result.UpdatedDate = DateTime.Now;
-                    if (user.DefaultBusiness > 0)
-                    {
-                        result.DefaultBusiness = user.DefaultBusiness;
-                    }
-
-                    await _context.SaveChangesAsync();
+                    result.DefaultBusiness = user.DefaultBusiness;
                 }
 
-                return result;
+                await _context.SaveChangesAsync();
             }
-            
+
+            return result;
+        }
+
     }
 }
