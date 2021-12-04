@@ -1,10 +1,8 @@
-﻿using Pelatis.Dto.Validators;
-using Pelatis.Entities;
+﻿using Pelatis.Data.Entity;
+using Pelatis.Dto.Validators;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace Pelatis.Dto
 {
@@ -50,6 +48,9 @@ namespace Pelatis.Dto
 
         public bool IsDeleted { get; set; }
 
+        [JsonIgnore]
         public int DefaultBusinessId { get; set; }
+
+        public string Token { get; set; }
     }
 }

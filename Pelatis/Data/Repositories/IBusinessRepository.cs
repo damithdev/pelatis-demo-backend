@@ -1,7 +1,6 @@
-﻿using Pelatis.Entities;
+﻿using Pelatis.Data.Entity;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Pelatis.Data.Repositories
@@ -11,7 +10,8 @@ namespace Pelatis.Data.Repositories
         Task<Business> AddBusiness(Business business);
         Task<IEnumerable<Business>> GetBusinesses();
         Task<IEnumerable<Business>> GetBusinessesByUser(AppUser user);
-        Task<Business> GetBusiness(int businessId);
+        Task<Business> GetBusinessByUserAndName(AppUser user, String companyName);
+        Task<Business> GetBusinessByUserAndId(AppUser user, int businessId);
         Task<Business> UpdateBusiness(Business business);
         Task<bool> DeleteBusiness(int businessId);
     }

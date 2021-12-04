@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Pelatis.Entities;
-using Pelatis.Workers.Errors;
+using Pelatis.Data.Entity;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +21,7 @@ namespace Pelatis.Data.Repositories
         public async Task<AppUser> AddUser(AppUser user)
         {
             user.CreatedDate = DateTime.Now;
-            user.UpdatedDate = DateTime.Now;
+            //user.UpdatedDate = DateTime.Now;
             var result = await _context.AppUsers.AddAsync(user);
             await _context.SaveChangesAsync();
             return result.Entity;
@@ -45,48 +45,88 @@ namespace Pelatis.Data.Repositories
 
         public async Task<AppUser> GetUser(int userId)
         {
-            return await _context.AppUsers.Where(u => u.IsDeleted == false).FirstOrDefaultAsync(u => u.Id == userId);
+            try
+            {
+                return await _context.AppUsers.Where(u => u.IsDeleted == false).FirstOrDefaultAsync(u => u.Id == userId);
+
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public async Task<AppUser> GetUserByEmail(string email)
         {
-            return await _context.AppUsers.Where(u => u.IsDeleted == false).FirstOrDefaultAsync(u => u.Email == email);
+            try
+            {
+                return await _context.AppUsers.Where(u => u.IsDeleted == false).FirstOrDefaultAsync(u => u.Email == email);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public async Task<IEnumerable<AppUser>> GetUsers()
         {
-            return await _context.AppUsers.Where(u => u.IsDeleted == false).ToListAsync();
+            try
+            {
+                return await _context.AppUsers.Where(u => u.IsDeleted == false).ToListAsync();
+
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public async Task<IEnumerable<AppUser>> GetUsersWithDeleted()
         {
-            return await _context.AppUsers.ToListAsync();
+            try
+            {
+                return await _context.AppUsers.ToListAsync();
+
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public async Task<AppUser> GetUserWithDeleted(int userId)
         {
-            return await _context.AppUsers.FirstOrDefaultAsync(u => u.Id == userId);
+            try
+            {
+                return await _context.AppUsers.FirstOrDefaultAsync(u => u.Id == userId);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public async Task<AppUser> UpdateUser(AppUser user)
         {
-            var result = await _context.AppUsers.Where(u => u.IsDeleted == false).FirstOrDefaultAsync(u => u.Id == user.Id);
 
-            if (result != null)
-            {
-                result.FirstName = user.FirstName;
-                result.LastName = user.LastName;
-                result.Email = user.Email;
-                result.UpdatedDate = DateTime.Now;
-                result.Secret = user.Secret;
-                result.Salt = user.Salt;
-                result.DefaultBusiness = user.DefaultBusiness;
+                var result = await _context.AppUsers.Where(u => u.IsDeleted == false).FirstOrDefaultAsync(u => u.Id == user.Id);
 
-                await _context.SaveChangesAsync();
+                if (result != null)
+                {
+                    result.FirstName = user.FirstName;
+                    result.LastName = user.LastName;
+                    result.Email = user.Email;
+                    result.UpdatedDate = DateTime.Now;
+                    if (user.DefaultBusiness > 0)
+                    {
+                        result.DefaultBusiness = user.DefaultBusiness;
+                    }
+
+                    await _context.SaveChangesAsync();
+                }
+
+                return result;
             }
-
-            return result;
-
-        }
+            
     }
 }

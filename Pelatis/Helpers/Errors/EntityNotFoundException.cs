@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Pelatis.Workers.Errors
+namespace Pelatis.Helpers.Errors
 {
     public class EntityNotFoundException : Exception
     {

@@ -2,15 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Pelatis.Entities
+namespace Pelatis.Data.Entity
 {
     public class AppUser
     {
         public int Id { get; set; }
-        
+
         [Column(TypeName = "VARCHAR")]
         [StringLength(255)]
         public string FirstName { get; set; }

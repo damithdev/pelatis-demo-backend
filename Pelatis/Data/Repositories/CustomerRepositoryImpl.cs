@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Pelatis.Entities;
+using Pelatis.Data.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +28,7 @@ namespace Pelatis.Data.Repositories
         public async Task<bool> DeleteCustomer(int customerId)
         {
             var result = await _context.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
-            if(result != null)
+            if (result != null)
             {
                 _context.Customers.Remove(result);
                 await _context.SaveChangesAsync();
@@ -39,34 +39,81 @@ namespace Pelatis.Data.Repositories
 
         public async Task<Customer> GetCustomer(int id)
         {
-            return await _context.Customers.FirstOrDefaultAsync(c => c.Id == id);
+            try{
+                return await _context.Customers.FirstOrDefaultAsync(c => c.Id == id);
+            }
+            catch { return null; }
+        }
+
+        public async Task<Customer> GetCustomerOfUser(AppUser user, int customerId)
+        {
+            try
+            {
+                return await _context.Customers.Where(c => c.Business.AppUser == user).FirstOrDefaultAsync(c => c.Id == customerId);
+
+            }
+            catch { return null; }
+        }
+
+        public async Task<Customer> GetCustomerOfBusiness(Business business, int customerId)
+        {
+            try
+            {
+                return await _context.Customers.Where(c => c.Business == business).FirstOrDefaultAsync(c => c.Id == customerId);
+
+            }
+            catch { return null; }
+        }
+
+        public async Task<Customer> GetCustomerOfBusinessByEmail(Business business, string email)
+        {
+            try
+            {
+                return await _context.Customers.Where(c => c.Business == business).FirstOrDefaultAsync(c => c.Email == email);
+
+            }
+            catch { return null; }
         }
 
         public async Task<IEnumerable<Customer>> GetCustomers()
         {
-            return await _context.Customers.ToListAsync();
+            try
+            {
+                return await _context.Customers.ToListAsync();
+
+            }
+            catch { return null; }
         }
 
         public async Task<IEnumerable<Customer>> GetCustomersByBusiness(Business business)
         {
-            return await _context.Customers.Where(c => c.Business == business).ToListAsync();
+            try
+            {
+                return await _context.Customers.Where(c => c.Business == business).ToListAsync();
+
+            }
+            catch { return null; }
         }
 
         public async Task<IEnumerable<Customer>> GetCustomersByUser(AppUser user)
         {
-            return await _context.Customers.Where(c => c.Business.AppUser == user).ToListAsync();
+            try
+            {
+                return await _context.Customers.Where(c => c.Business.AppUser == user).ToListAsync();
+            }
+            catch { return null; }
         }
 
         public async Task<Customer> UpdateCustomer(Customer customer)
         {
             var result = await _context.Customers.FirstOrDefaultAsync(c => c.Id == customer.Id);
-            if(result != null)
+            if (result != null)
             {
                 result.Name = customer.Name;
                 result.Email = customer.Email;
                 result.Phone = customer.Phone;
                 result.UpdatedDate = DateTime.Now;
-                if(customer.Business != null)
+                if (customer.Business != null)
                 {
                     result.Business = customer.Business;
                 }
@@ -74,5 +121,7 @@ namespace Pelatis.Data.Repositories
             }
             return result;
         }
+
+
     }
 }

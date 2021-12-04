@@ -1,9 +1,7 @@
-﻿using Pelatis.Entities;
+﻿using Pelatis.Data.Entity;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace Pelatis.DTOs
 {
@@ -21,9 +19,14 @@ namespace Pelatis.DTOs
             TypeOfBusiness = business.TypeOfBusiness;
             Country = business.Country;
             Currency = business.Currency;
-            AppUser = business.AppUser;
             CreatedDate = business.CreatedDate;
             UpdatedDate = business.UpdatedDate;
+
+            if (business.AppUser != null)
+            {
+                AppUserId = business.AppUser.Id;
+
+            }
         }
 
         public int Id { get; set; }
@@ -44,9 +47,8 @@ namespace Pelatis.DTOs
         [StringLength(250, MinimumLength = 2)]
         public string Currency { get; set; }
 
-        public AppUser AppUser { get; set; }
-
-        public List<Customer> Customers { get; set; }
+        [JsonIgnore]
+        public int AppUserId { get; set; }
 
         public DateTime? CreatedDate { get; set; }
 
