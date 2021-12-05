@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Pelatis.Data.Entity;
+using Pelatis.Dto;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -16,7 +17,7 @@ namespace Pelatis.Services
         {
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
         }
-        public string CreateToken(AppUser user)
+        public void CreateToken(ref AppUserDto dto,AppUser user)
         {
             var claims = new List<Claim>
             {
@@ -24,17 +25,19 @@ namespace Pelatis.Services
             };
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
-
+            var exp = DateTime.Now.AddDays(1);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddMinutes(60 * 12),
+                Expires = exp,
                 SigningCredentials = creds
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+            dto.Expiry = tokenDescriptor.Expires;
+            dto.Token = tokenHandler.WriteToken(token);
         }
+
     }
 }

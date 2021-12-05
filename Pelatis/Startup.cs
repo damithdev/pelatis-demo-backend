@@ -25,7 +25,9 @@ namespace Pelatis
 
             services.AddControllers();
 
-            services.AddCors();
+            services.AddCors(c => {
+                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyHeader());
+            });
 
             services.AddIdentityServices(Configuration);
 
@@ -49,7 +51,7 @@ namespace Pelatis
 
             app.UseRouting();
 
-            app.UseCors();
+            app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader());
 
             app.UseAuthentication();
 

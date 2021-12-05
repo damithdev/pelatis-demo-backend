@@ -39,9 +39,6 @@ namespace Pelatis.Dto
         [EmailValidator]
         public string Email { get; set; }
 
-        [StringLength(100, MinimumLength = 8)]
-        public string Password { get; set; }
-
         public DateTime? CreatedDate { get; set; }
 
         public DateTime? UpdatedDate { get; set; }
@@ -52,5 +49,6 @@ namespace Pelatis.Dto
         public int DefaultBusinessId { get; set; }
 
         public string Token { get; set; }
+        public DateTime? Expiry { get; set; }
     }
 }

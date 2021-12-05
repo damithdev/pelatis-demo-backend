@@ -58,7 +58,7 @@ namespace Pelatis.Controllers
 
                 var createdUser = await _appUserRepository.AddUser(newUser);
                 var userDto = new AppUserDto(createdUser);
-                userDto.Token = _tokenService.CreateToken(createdUser);
+                _tokenService.CreateToken(ref userDto,createdUser);
                 return userDto;
             }
             catch (Exception e)
@@ -96,7 +96,7 @@ namespace Pelatis.Controllers
                     return Unauthorized(StaticEntry.InvalidCreds);
                 }
                 var userDto = new AppUserDto(user);
-                userDto.Token = _tokenService.CreateToken(user);
+                _tokenService.CreateToken(ref userDto,user);
                 return userDto;
             }
             catch (Exception e)
