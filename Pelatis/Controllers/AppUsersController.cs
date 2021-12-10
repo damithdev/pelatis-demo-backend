@@ -91,6 +91,34 @@ namespace Pelatis.Controllers
             }
         }
 
+        [UserAuthorizeAttribute]
+        [HttpPost("onboard")]
+        public async Task<ActionResult<AppUserDto>> OnBoard(AppUserDto dealer)
+        {
+            try
+            {
+                if (dealer == null) return BadRequest();
+
+                var user = (AppUser)HttpContext.Items["User"];
+
+                if (user == null)
+                {
+                    return BadRequest("User Does not Exist");
+                }
+
+                user.FirstName = dealer.FirstName;
+                user.LastName = dealer.LastName;
+
+                var updatedUser = await _appUserRepository.UpdateUser(user);
+                return new AppUserDto(user);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("User Onboard Ex:", e);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error Onboarding User");
+            }
+        }
+
 
 
     }

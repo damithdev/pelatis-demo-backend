@@ -44,10 +44,7 @@ namespace Pelatis.Dto
         public DateTime? UpdatedDate { get; set; }
 
         public bool IsDeleted { get; set; }
-
-        [JsonIgnore]
         public int DefaultBusinessId { get; set; }
-
         public string Token { get; set; }
         public DateTime? Expiry { get; set; }
     }

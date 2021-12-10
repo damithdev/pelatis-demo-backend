@@ -63,9 +63,12 @@ namespace Pelatis.Controllers
 
                 var createdBusiness = await _businessRepository.AddBusiness(newBusiness);
 
+                if(user.DefaultBusiness == 0)
+                {
+                    user.DefaultBusiness = createdBusiness.Id;
+                    await _appUserRepository.UpdateUser(user);
+                }
 
-                user.DefaultBusiness = createdBusiness.Id;
-                await _appUserRepository.UpdateUser(user);
 
 
                 return new BusinessDto(createdBusiness);
